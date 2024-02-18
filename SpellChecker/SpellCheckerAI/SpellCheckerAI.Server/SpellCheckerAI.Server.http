@@ -1,0 +1,6 @@
+@SpellCheckerAI.Server_HostAddress = http://localhost:5298
+
+GET {{SpellCheckerAI.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
