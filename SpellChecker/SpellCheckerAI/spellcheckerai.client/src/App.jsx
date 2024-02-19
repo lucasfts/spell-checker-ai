@@ -1,49 +1,45 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import './App.css';
+import { TextareaAutosize, Button, Typography, Container, Card, CardContent } from '@mui/material';
+import { green, red } from '@mui/material/colors';
 
 function App() {
-    const [forecasts, setForecasts] = useState();
+    const [text, setText] = useState('');
+    const [result, setResult] = useState();
 
-    useEffect(() => {
-        populateWeatherData();
-    }, []);
-
-    const contents = forecasts === undefined
-        ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
-        : <table className="table table-striped" aria-labelledby="tabelLabel">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Temp. (C)</th>
-                    <th>Temp. (F)</th>
-                    <th>Summary</th>
-                </tr>
-            </thead>
-            <tbody>
-                {forecasts.map(forecast =>
-                    <tr key={forecast.date}>
-                        <td>{forecast.date}</td>
-                        <td>{forecast.temperatureC}</td>
-                        <td>{forecast.temperatureF}</td>
-                        <td>{forecast.summary}</td>
-                    </tr>
-                )}
-            </tbody>
-        </table>;
+    const checkSpelling = async () => {
+        const params = new URLSearchParams({ text });
+        const response = await fetch(`spell-check?${params}`);
+        const data = await response.json();
+        setResult(data);
+    };
 
     return (
-        <div>
-            <h1 id="tabelLabel">Weather forecast</h1>
-            <p>This component demonstrates fetching data from the server.</p>
-            {contents}
-        </div>
+        <Container maxWidth="sm">
+            <Typography variant="h4" gutterBottom>
+                Spell Checker
+            </Typography>
+            <div style={{ marginBottom: '16px', paddingRight: '16px' }}>
+                <TextareaAutosize
+                    aria-label="Enter text"
+                    minRows={5}
+                    value={text}
+                    onChange={e => setText(e.target.value)}
+                    style={{ width: '100%', resize: 'vertical', padding: '8px' }}
+                />
+            </div>
+            <Button variant="contained" onClick={checkSpelling} fullWidth>
+                Check Spelling
+            </Button>
+            {result && <Card variant="outlined" style={{ marginTop: '16px', width: '100%' }}>
+                <CardContent>
+                    <Typography variant="body2" color={result.isValid ? green[500] : red[500]}>
+                        {result.feedback}
+                    </Typography>
+                </CardContent>
+            </Card>}
+        </Container>
     );
-    
-    async function populateWeatherData() {
-        const response = await fetch('weatherforecast');
-        const data = await response.json();
-        setForecasts(data);
-    }
 }
 
 export default App;

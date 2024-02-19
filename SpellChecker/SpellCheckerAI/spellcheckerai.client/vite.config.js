@@ -46,7 +46,7 @@ export default defineConfig({
     },
     server: {
         proxy: {
-            '^/weatherforecast': {
+            '^/spell-check': {
                 target: 'https://localhost:7094/',
                 secure: false
             }
